@@ -1,0 +1,152 @@
+---
+title: 'DATA608: Assignment 3'
+author: "Eric Lehmphul"
+date: "10/7/2022"
+output: 
+  html_document:
+    toc: true
+    code_folding: show
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, warning=F, message=F}
+library(shiny)
+library(tidyverse)
+library(plotly)
+library(rsconnect)
+```
+
+
+```{r}
+data <- read.csv("https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module3/data/cleaned-cdc-mortality-1999-2010-2.csv")
+```
+
+# Question 1
+
+As a researcher, you frequently compare mortality rates from particular causes across different States. You need a visualization that will let you see (for 2010 only) the crude mortality rate, across all States, from one cause (for example, Neoplasms, which are effectively cancers). Create a visualization that allows you to rank States by crude mortality for each cause of death.
+
+
+```{r}
+# Get data from only 2010
+data_2010 <- data %>% filter(Year == 2010)
+
+# Create list of causes of death (ICD) to be used for a button
+causes_of_death <- data_2010 %>% distinct(ICD.Chapter)
+```
+
+
+
+
+```{r}
+# set up user interface
+ui_q1 <- fluidPage(
+  # Make Title
+  titlePanel("Question 1: Mortality Rate By State"),
+  
+  # Set up cause of death selection button
+   fluidRow(
+     
+      selectInput("ICD", 
+                  label = "Select cause of death to be compared by State",
+                  choices = causes_of_death$ICD.Chapter,
+                  selected = "Neoplasms")
+      
+   ),
+  plotlyOutput("bar_chart", height = 1000)
+)
+```
+
+
+```{r}
+server_q1 <- function(input, output){
+  # Make data reactive
+  data_2010_reactive <- reactive(data_2010 %>% filter(ICD.Chapter == input$ICD))
+  
+  # Generate graph
+  output$bar_chart <- renderPlotly({plot_ly(data = data_2010_reactive(), x = ~Crude.Rate, y = ~State, type = "bar", orientation = "h", marker = list(color = "rgb(173, 177, 247)",
+                            line = list(color = "rgb(20, 20, 20)",
+                                        width = 1.5))) %>% plotly::layout(yaxis = list(categoryorder = "total ascending"))
+    })
+}
+```
+
+
+```{r}
+shinyApp(ui = ui_q1, server = server_q1)
+```
+
+
+
+
+# Question 2
+
+Often you are asked whether particular States are improving their mortality rates (per cause) faster than, or slower than, the national average. Create a visualization that lets your clients see this for themselves for one cause of death at the time. Keep in mind that the national average should be weighted by the national population.
+
+
+Used the formula: $Crude.Rate = Deaths/Population * 100,000$ when grouped by `Year` and `ICD.Chapter` to calculate the national average. This formula was given in the help document under Crude Rate at the following link: https://wonder.cdc.gov/wonder/help/ucd.html#.
+
+```{r}
+# Prepare data for shiny app
+
+# Create new variable, National.Avg
+data_q2 <- data %>% group_by(Year, ICD.Chapter) %>%
+  mutate(National.Avg = sum(Deaths) / sum(Population) * 100000)
+
+```
+
+
+
+```{r}
+# Create user interface
+
+ui_q2 <- fluidPage(
+  titlePanel("Question 2: State Mortality Rate vs National Average"),
+  
+  fluidRow(
+     
+      selectInput("State", 
+                  label = "Select State",
+                  choices = unique(data_q2$State),
+                  selected = "NY")
+      
+   ),
+  
+  fluidRow(
+     
+      selectInput("ICD", 
+                  label = "Select cause of death",
+                  choices = causes_of_death$ICD.Chapter,
+                  selected = "Neoplasms")
+      
+   ),
+  plotlyOutput("plot", height = 750)
+)
+```
+
+
+
+```{r}
+server_q2 <- function(input, output){
+  data_q2_reactive <- reactive(data_q2)
+  
+  output$plot <- renderPlotly({
+    data_q2_reactive() %>% filter(State == input$State, ICD.Chapter == input$ICD) %>% ungroup() %>%
+    plot_ly(x = ~Year, y = ~Crude.Rate, type = 'bar', name = 'State Mortality Rate', marker = list(color = "rgb(60, 143, 57)",
+                            line = list(color = "rgb(20, 20, 20)",
+                                        width = 1.5))) %>%
+  add_trace(x = ~Year, y = ~National.Avg, type = 'scatter',  mode = 'lines', name = 'National Mortality Rate', marker = list(color = "rgb(112, 23, 17)"), line = list(color = "rgb(112, 23, 17)", width = 2.5))
+
+  })
+}
+```
+
+
+```{r}
+shinyApp(ui = ui_q2, server = server_q2)
+```
+
