@@ -1,0 +1,222 @@
+---
+title: 'DATA608: Final Project Proposal'
+author: "Eric Lehmphul"
+date: "10/23/2022"
+output: rmdformats::readthedown
+---
+
+# Objective
+
+For my final project, I intend on building a web based application of NHL regular season and post season data to explore:
+
+
+* What is most important for a team to advance to the playoffs?
+* Does success in the post season match the metrics from regular season success?
+
+I believe this application can be leveraged be teams to gain insight into where they stack up against the competition and where they can improve to increase their odds of making the playoffs / winning the Stanley Cup.
+
+# Methodology
+
+I intend to use R shiny in conjunction with a handful of reactive visualizations (scatterplot, barplot, etc.) to be able to answer the proposed questions above.
+
+# Data Sources
+
+The data sources are being acquired from https://www.hockey-reference.com/. As more and more work is done on the project, I may include new data sources to continue progressing on the project. The data needs a lot of clean up before I can start creating visualization. Below is only a small sample size of the datasets I intend to use as I plan to be compiling data from the last 5 to 10 seasons or so.
+
+## Regular Season Data
+
+
+
+### Team Statistics
+
+* Rk -- Rank
+* AvAge -- Average age of team weighted by time on ice.
+* GP -- Games Played
+* W -- Wins
+* L -- Losses
+* OL -- Overtime/Shootout Losses (2000 season onward)
+
+**Scoring**
+
+* PTS -- Points
+* PTS% -- Points percentage (i.e., points divided by maximum points)
+
+**Scoring**
+
+* GF -- Goals For
+
+**Goalie Stats**
+
+* GA -- Goals Against
+* SOW -- Shootout Wins
+* SOL -- Shootout Losses
+* SRS -- Simple Rating System; a team rating that takes into account average goal differential and strength of schedule. The rating is denominated in goals above/below average, where zero is average.
+* SOS -- Strength of Schedule; a rating of strength of schedule. The rating is denominated in goals above/below average, where zero is average.
+* GF/G -- Goals For Per Game
+* GA/G -- Goals Against Per Game
+
+**Special Teams**
+
+* PP -- Power Play Goals
+* PPO -- Power Play Opportunities
+* PP% -- Power Play Percentage
+* PPA -- Power Play Goals Against
+* PPOA -- Power Play Opportunities Against
+* PK% -- Penalty Killing Percentage
+* SH -- Short-Handed Goals
+* SHA -- Short-Handed Goals Against
+* PIM/G -- Penalties in Minutes Per Game
+* oPIM/G -- Opponent Penalties in Minutes Per Game
+
+**Shot Data**
+
+* S -- Shots on Goal
+* S% -- Shooting Percentage
+* SA -- Shots Against
+* SV% -- Save Percentage
+* Goalie Stats
+* SO -- Shutouts
+
+```{r}
+data_sample <- read.csv("https://raw.githubusercontent.com/SaneSky109/DATA608/main/Final_Project/Data/nhl_2021_2022_stats.csv")
+
+names(data_sample) <- lapply(data_sample[1, ], as.character)
+data_sample <- data_sample[-1,]
+
+data_sample
+```
+
+
+### Team Analytics 5v5
+
+* Rk -- Rank
+* S% -- Shooting percentage at 5-on-5
+* SV% -- Save percentage at 5-on-5
+* PDO -- Shooting % + Save %
+
+**Corsi (5v5)**
+
+* CF -- Corsi For at 5 on 5 Shots + Blocks + Misses
+* CA -- Corsi Against at 5 on 5 Shots + Blocks + Misses
+* CF% -- Corsi For % at 5 on 5 CF / (CF + CA)
+  - Above 50% means the team was controlling the puck more often than not with this player on the ice in this situation.
+**Fenwick (5v5)**
+* FF -- Fenwick For at 5 on 5 Shots + Misses
+* FA -- Fenwick Against at 5 on 5 Shots + Misses
+* FF% -- Fenwick For % at 5 on 5 FF / (FF + FA)
+  - Above 50% means the team was controlling the puck more often than not with this player on the ice in this situation.
+**Possession Quality**
+* xGF -- 'Expected Goals For' given where shots came from, for and against, while this player was on the ice at even strength. It's based on where the shots are coming from, compared to the league-wide shooting percentage for that shot location.
+* xGA -- 'Expected Goals Against' given where shots came from, for and against, while this player was on the ice at even strength. It's based on where the shots are coming from, compared to the league-wide shooting percentage for that shot location.
+* aGF -- Actual goals for (5-on-5)
+* aGA -- Actual goals against (5-on-5)
+* axDiff -- Actual goal differential minus expected goal differential. A positive differential would indicate a team is converting or stopping an inordinate amount of good chances compared to league average. A negative differential would indicate a team is getting more good chances, but not converting or is allowing more than league norms.
+* SCF -- Scoring chances for. Scoring chances are all shot attempts from within a certain range from the net.
+* SCA -- Scoring chances against
+* SCF% -- Percentage of scoring chances in this team's favor
+* HDF -- High-danger scoring chances for. High-danger chances include shot attempts from the 'slot' area and rebounds, approximately.
+* HDA -- High-danger scoring chances against
+* HDF% -- Percentage of high-danger scoring chances in this team's favor
+* HDGF -- High-danger scoring chances for that lead to goals
+* HDC% -- Percentage of high-danger scoring chances that are converted to goals, for this team
+* HDGA -- High-danger scoring chances against that lead to goals
+* HDCO% -- Percentage of high-danger scoring chances that are converted to goals, for this team's opponents
+
+
+```{r}
+data_sample <- read.csv("https://raw.githubusercontent.com/SaneSky109/DATA608/main/Final_Project/Data/nhl_2021_2022_analytics.csv")
+
+names(data_sample) <- lapply(data_sample[1, ], as.character)
+data_sample <- data_sample[-1,]
+
+data_sample
+```
+
+## Playoff Data
+
+The playoff data needs to be web scraped, as there is no one table for all teams in a specific season on the www.hockey-reference.com website. Currently I am working on scraping the data. I have not managed to get it fully running yet, but the general dataframe structure is below. I will aggregate the player and Goalie data to be compared with the regular season data.
+
+
+### Players Data
+
+* Rk -- Rank
+* Age -- As of Jan. 31 of the season in question. Or as of the date of the game listed. Age is Years-Days.
+
+**Ice Time**
+
+* GP -- Games Played
+
+**Scoring**
+
+* G -- Goals
+- A -- Assists
+- PTS -- Points
+
+**Plus/Minus**
+
+- +/- -- Plus/Minus
+- PIM -- Penalties in Minutes
+
+**Goals**
+
+- EV -- Even Strength Goals
+- PP -- Power Play Goals
+- SH -- Short-Handed Goals
+- GW -- Game-Winning Goals
+
+**Assists**
+
+- EV -- Even Strength Assists
+- PP -- Power Play Assists
+- SH -- Short-Handed Assists
+
+**Shots on Goal**
+
+- S -- Shots on Goal
+- S% -- Shooting Percentage
+
+**Ice Time**
+
+- TOI -- Time on Ice (in minutes)
+- ATOI -- Average Time on Ice
+
+```{r}
+colorado.players.2022 <- read.csv("https://raw.githubusercontent.com/SaneSky109/DATA608/main/Final_Project/Data/colorado_2021_2022_plyoffs_players.csv")
+
+names(colorado.players.2022) <- lapply(colorado.players.2022[1, ], as.character)
+colorado.players.2022 <- colorado.players.2022[-1,]
+
+colorado.players.2022
+```
+
+
+### Goalie Data
+
+- GP -- Games Played
+- GS -- Games Started
+- W -- Wins
+- L -- Losses
+- T/O -- Ties plus Overtime/Shootout Losses
+- GA -- Goals Against
+- SA -- Shots Against
+- SV -- Saves
+- SV% -- Save Percentage
+- GAA -- Goals Against Average
+- SO -- Shutouts
+- MIN -- Minutes
+- QS -- Quality Starts
+Starts with SV% > average SV% for the year, or at least 88.5% on nights with 20 or fewer shots against.
+Developed by Rob Vollman in the Hockey Abstract.
+- QS% -- Quality Start Percentage  QS/GS > 60% Good, < 50% Bad, ~53% League Avg Developed by Rob Vollman in the Hockey Abstract.
+- RBS -- Really Bad Starts
+Starts with a SV% below 85%.
+Developed by Rob Vollman in the Hockey Abstract
+
+```{r}
+colorado.goalies.2022 <- read.csv("https://raw.githubusercontent.com/SaneSky109/DATA608/main/Final_Project/Data/colorado_2021_2022_playoffs_goalies.csv")
+
+names(colorado.goalies.2022) <- lapply(colorado.goalies.2022[1, ], as.character)
+colorado.goalies.2022 <- colorado.goalies.2022[-1,]
+
+colorado.goalies.2022
+```
