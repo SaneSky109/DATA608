@@ -1,0 +1,5 @@
+,,,Goalie Stats,,,,,,,,,,,,,,,,
+Rk,Player,Age,GP,GS,W,L,T/O,GA,SA,SV,SV%,GAA,SO,MIN,QS,QS%,RBS,Ga_pct_minus_po,Gs_above_avg_po
+1,Darcy Kuemper,31,16,16,10,4,0,38,386,348,0.902,2.57,1,887,9,0.563,3,113,-4.3
+2,Pavel Francouz,31,7,4,6,0,0,16,171,155,0.906,2.81,1,341,2,0.5,0,107,-1.1
+,Team Total,,20,,16,4,0,54,557,503,0.903,2.64,2,1228,11,0.55,3,111,-5.3
