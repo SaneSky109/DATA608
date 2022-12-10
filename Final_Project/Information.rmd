@@ -1,0 +1,76 @@
+---
+output:
+  html_document:
+    df_print: paged
+---
+
+# NHL: Valuable Statistics
+
+#### Eric Lehmphul
+
+This project and all related code can be found on my [Github](https://github.com/SaneSky109/DATA608)
+
+## Project Motivation
+
+I am an avid ice hockey fan and have been playing the game for as long as I can remember. The NHL has adopted a more skillful image than that of the teams of old. The purpose of this analysis is to explore NHL data to answer the following questions:
+
+* What is most important for a team to advance to the playoffs?
+* Does success in the post season match the metrics from regular season success?
+
+This interactive dashboard will provide invaluable insight for coaches who can identify the most important statistics for success. This application can be adapted to other leagues and teams as well.    
+
+## Data Visualizations 
+
+
+This Shiny application is an interactive experience to explore NHL team data for both regular and post season. The first tab focuses on the Regular Season data. A Bar plot is used to compare team stats to the 5 year average for a selected statistic. A scatter plot is utilized to compare two statistics to identify variables with large clusters of teams that qualified for the playoffs. The tab, 'Regular Season: Timeseries' looks at an individual team's stats over the last 5 seasons. Coaches can look at team progression via this visualization. The next tab focuses on Playoff data. Similar visualizations to the 'Regular Season' tab are applied here to allow for comparison.  
+
+
+
+## Data Source
+
+The data was acquired from www.MoneyPuck.com (https://www.moneypuck.com/data.htm for regular season and https://moneypuck.com/teams.htm for post season data). The data spans over the last 5 complete seasons (2017-2018 to 2021-2022). The analysis contains data related to goals scoring, goaltending, possession, physicality, and grit. Below is a data dictionary of the variables displayed in the interactive visualizations further in the analysis.
+
+The exact data sources and data preparation files can be found on my [Github](https://github.com/SaneSky109/DATA608)
+
+## Data Dictionary
+
+| **Variable**          | **Description**      
+|----------------|-------------------------
+| xGoalsPercentage   | probability of a shot resulting in a goal
+| corsiPercentage | A ratio that shows the percentage of shot attempts created by a team versus the total shot attempts in a game
+| fenwickPercentage| A ratio that shows the percentage of unblocked shot attempts created by a team versus the total shot attempts in a game
+| flurryAdjustedxGoalsFor | Flurry adjusted expected goals is a statistic that discounts the expected goal value of the 2nd, 3rd, 4th, etc shots in a flurry of shots
+|blockedShotAttemptsFor | Shot attempts that were blocked per game
+ |shotsOnGoalFor| Shot attempts that made it to the goal per game
+|missedShotsFor| Shot attempts that missed the goal per game
+|goalsFor| Number of goals scored per game
+|reboundsFor| Number of rebounds per game
+|reboundGoalsFor| Number of rebound goals scored per game
+|freezeFor| Number of goalie puck freezes per game
+| savedShotsOnGoalFor | Number of goalie saves per game
+| penaltiesFor| Number of penalties per game
+| faceOffPercentage| Percent of faces won
+| hitsFor| Number of hits per game
+| takeawaysFor| Number of takeaways per game
+| giveawaysFor| Number of giveaways per game
+| lowDangerShotsFor| Number of low percentage scoring shots per game
+| mediumDangerShotsFor| Number of medium percentage scoring shots per game
+| highDangerShotsFor| Number of high percentage scoring shots per game
+| flurryAdjustedxGoalsAgainst | Flurry adjusted expected goals is a statistic that discounts the expected goal value of the 2nd, 3rd, 4th, etc shots in a flurry of shots. This stat is the expected goals to occur against a particular team.
+|blockedShotAttemptsAgainst | Opponent shot attempts that were blocked per game
+ |shotsOnGoalAgainst| Opponent shot attempts that made it to the goal per game
+|missedShotsAgainst| Opponent shot attempts that missed the goal per game
+|goalsAgainst| Number of goals scored by Opponent per game on average
+|reboundsAgainst| Number of rebounds by Opponent per game on average
+|reboundGoalsAgainst| Number of rebound goals scored by Opponent per game on average
+|freezeAgainst| Number of Opponent goalie puck freezes per game
+| savedShotsOnGoalAgainst | Number of goalie saves per game
+| penaltiesAgainst| Number of penalties per game
+| faceOffPercentage| Percent of faces won
+| hitsAgainst| Number of hits per game
+| takeawaysAgainst| Number of takeaways per game
+| giveawaysAgainst| Number of giveaways per game
+| lowDangerShotsAgainst| Number of low percentage scoring shots per game
+| mediumDangerShotsAgainst| Number of medium percentage scoring shots per game
+| highDangerShotsAgainst| Number of high percentage scoring shots per game
+| savePercentage| Teams overall goalie save percentage
